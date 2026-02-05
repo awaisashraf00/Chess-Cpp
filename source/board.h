@@ -8,11 +8,18 @@
 class Board
 {
     private:
-        int rows = 8;
+        
+    int rows = 8;
         int cell_size = 100;
-        std::pair<int,int> coords = {4,4};
         bool selected = true;
+        bool white = true;
+        bool black = false;
+        
+        std::pair<int,int> coords = {4,4};
         std::pair<int,int> current_peice = {-1,-1};
+        
+        bool Is_Valid_Pos(int x , int y);
+    
         int grid[8][8] = {{-2,-3,-4,-5,-6,-4,-3,-2},
                         {-1,-1,-1,-1,-1,-1,-1,-1},
                         {0,0,0,0,0,0,0,0},
@@ -36,7 +43,8 @@ class Board
                         ,{5, "/Users/sherazrajput/Chess/game/pieces-basic-png/white-queen.png"}
                         ,{6, "/Users/sherazrajput/Chess/game/pieces-basic-png/white-king.png"}};
         std::map<int, Texture2D> textures;
-    public:
+    
+        public:
         Board();
         ~Board();
         void Display_Board();

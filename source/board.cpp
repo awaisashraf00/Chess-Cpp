@@ -1,8 +1,8 @@
 #include "raylib.h"
 #include "board.h"
 
-
-Board::Board() {
+Board::Board()
+{
     // Load all piece textures once to avoid per-frame loads
     for (const auto &p : pieces) {
         Texture2D tex = LoadTexture(p.second.c_str());
@@ -44,6 +44,14 @@ void Board::Display_Board() {
     }
 }
 
+
+// bool Board::Is_Valid_Pos(int x , int y)
+// {
+//     int chessMen = grid[x][y];
+    
+// }
+
+
 void Board::Game_Input()
 {
     int key = GetKeyPressed();
@@ -65,19 +73,46 @@ void Board::Game_Input()
 
     }else if(key==KEY_ENTER && selected == true){
 
-        if(grid[coords.first][coords.second]!=0){
+        if(grid[coords.first][coords.second]>0 && white ==  true){
+            
+            selected = false;
+            white = false;
+            black = true;
+            
+            current_peice.first = coords.first;
+            current_peice.second = coords.second;
+
+        }else if(grid[coords.first][coords.second]<0 && black ==  true){
+            selected = false;
+            white = true;
+            black = false;
+
             selected = false;
             current_peice.first = coords.first;
             current_peice.second = coords.second;
         }
+    }else if(key == KEY_SPACE && selected == false){
         
+        selected = true;
+        current_peice.first = -1;
+        current_peice.second = -1;
+        black = (black==true) ? false:true;
+        white = (white==true) ? false:true;
+
 
     }else if(key==KEY_ENTER && selected == false){
-        if(grid[coords.first][coords.second] >= 0){
-            selected = true;
-            grid[coords.first][coords.second] = grid[current_peice.first][current_peice.second];
-            grid[current_peice.first][current_peice.second] = 0;
+        if(!white){
+            if(grid[coords.first][coords.second] <= 0){
+                selected = true;
+                grid[coords.first][coords.second] = grid[current_peice.first][current_peice.second];
+                grid[current_peice.first][current_peice.second] = 0;
+            }
+        }else if (!black){ 
+            if(grid[coords.first][coords.second] >= 0){
+                selected = true;
+                grid[coords.first][coords.second] = grid[current_peice.first][current_peice.second];
+                grid[current_peice.first][current_peice.second] = 0;
+            }
         }
-        
     }
 }
