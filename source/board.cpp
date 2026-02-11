@@ -65,8 +65,8 @@ bool Board::Is_Valid_Pos(int x, int y, int id)
         piece = new Missile(x, y, white);
     else if (id == (white ? -3 : 3))
         piece = new Knight(x, y, white);
-    // else if (id == (white ? -5 : 5))
-    //     piece = new Queen(x, y, white);
+    else if (id == (white ? -5 : 5))
+        piece = new Queen(x, y, white);
     // else if (id == (white ? -4 : 4))
     //     piece = new King(x, y, white);
     else

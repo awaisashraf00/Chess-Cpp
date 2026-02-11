@@ -107,69 +107,70 @@ class  Missile :public Chessmen{
 
         std::vector<std::pair<int,int>> possible_move(int (*board)[8])override {
             std::vector<std::pair<int,int>> moves;
-            
-            int x = origin.first;
-            int y = origin.second;
 
-            while(board[x][y+1]==0 && y<8 && x<8){
+            int x = origin.first+1;
+            int y = origin.second+1;
+
+            while(board[x][y]==0 && y<8 && x<8){
                 moves.push_back({x,y});
                 y++;
                 x++;
             }
             
-            if(x!=7 && y!=7){
-                if(white==true ?(board[x+1][y+1]<=0):(board[x+1][y+1]>=0)){
-                    moves.push_back({x+1,y+1});
+            if(x<7 && y<7){
+                if(white?(board[x][y]<0):(board[x][y]>0)){
+                    moves.push_back({x,y});
                 }
             }
-            
-            x = origin.first;
-            y = origin.second;
 
-            while(board[x-1][y-1]==0 && y>0 && x>0){
+            x = origin.first-1;
+            y = origin.second-1;
+
+            while(board[x][y]==0 && y>0 && x>0){
                 moves.push_back({x,y});
                 y--;
                 x--;
             }
             
-            if(x!=0 && y!=0){
-                if(white==true ?(board[x-1][y-1]<=0):(board[x-1][y-1]>=0)){
-                    moves.push_back({x-1,y-1});
+            if(x>0 && y>0){
+                if(white?(board[x][y]<0):(board[x][y]>0)){
+                    moves.push_back({x,y});
                 }
             }
             
-            x = origin.first;
-            y = origin.second;
+            x = origin.first+1;
+            y = origin.second-1;
 
-            while(board[x+1][y-1]==0 && x<8 && y >0){
+            while(board[x][y]==0 && x<8 && y >0){
                 moves.push_back({x,y});
                 x++;
                 y--;
             }
 
-            if(x!=7 && y!=0){
-                if(white==true ?(board[x+1][y-1]<=0):(board[x+1][y-1]>=0)){
-                    moves.push_back({x+1,y-1});
+            if(x<7 && y>0){
+                if(white?(board[x][y]<0):(board[x][y]>0)){
+                    moves.push_back({x,y});
                 }
             }
 
-            x = origin.first;
-            y = origin.second;
+            x = origin.first-1;
+            y = origin.second+1;
 
-            while(board[x-1][y+1]==0 && x>0 && y <8){
+            while(board[x][y]==0 && x>0 && y <8){
                 moves.push_back({x,y});
                 x--;
                 y++;
             }
 
-            if(x!=0 && y!=7){
-                if(white==true ?(board[x-1][y+1]<=0):(board[x-1][y+1]>=0)){
-                    moves.push_back({x-1,y+1});
+            if(x>0 && y<7){
+                if(white?(board[x][y]<0):(board[x][y]>0)){
+                    moves.push_back({x,y});
                 }
             }
 
-        return moves;
+            return moves;
         }
+
 
 };
 
@@ -213,6 +214,7 @@ public:
         return moves;
     }
 };
+
 // class  King :public Chessmen{
 //     bool white;
 //     public:
@@ -253,43 +255,119 @@ public:
 
 // };
 
-// class  Queen :public Chessmen{
-//     bool white;
-//     public:
-//         Queen(int x, int y, bool con ) : Chessmen(x, y),white(!con){}    
-//         std::vector<std::pair<int,int>> possible_move(int (*board)[8]) {
-//             std::vector<std::pair<int,int>> moves;
+
+class  Queen :public Chessmen{
+    bool white;
+    public:
+        Queen(int x, int y, bool con ) : Chessmen(x, y),white(!con){}    
+        std::vector<std::pair<int,int>> possible_move(int (*board)[8])override {
+            std::vector<std::pair<int,int>> moves;
             
-//             int x = origin.first;
-//             int y = origin.second;
+            int x = origin.first;
+            int y = origin.second;
+            // Right
+            for (int j = y + 1; j < 8; j++) {
+                if (board[x][j] == 0)
+                    moves.push_back({x, j});
+                else {
+                    if (white ? board[x][j] < 0 : board[x][j] > 0)
+                        moves.push_back({x, j});
+                    break;
+                }
+            }
+            // Left
+            for (int j = y - 1; j >= 0; j--) {
+                if (board[x][j] == 0)
+                    moves.push_back({x, j});
+                else {
+                    if (white ? board[x][j] < 0 : board[x][j] > 0)
+                        moves.push_back({x, j});
+                    break;
+                }
+            }
+            // Down
+            for (int i = x + 1; i < 8; i++) {
+                if (board[i][y] == 0)
+                    moves.push_back({i, y});
+                else {
+                    if (white ? board[i][y] < 0 : board[i][y] > 0)
+                        moves.push_back({i, y});
+                    break;
+                }
+            }
+            // Up
+            for (int i = x - 1; i >= 0; i--) {
+                if (board[i][y] == 0)
+                    moves.push_back({i, y});
+                else {
+                    if (white ? board[i][y] < 0 : board[i][y] > 0)
+                        moves.push_back({i, y});
+                    break;
+                }
+            }
+
+            // Diagonals /////
             
+            x = origin.first+1;
+            y = origin.second+1;
+
+            while(board[x][y]==0 && y<8 && x<8){
+                moves.push_back({x,y});
+                y++;
+                x++;
+            }
+            if(x<7 && y<7){
+                if(white?(board[x][y]<0):(board[x][y]>0)){
+                    moves.push_back({x,y});
+                }
+            }
+
+            x = origin.first-1;
+            y = origin.second-1;
+
+            while(board[x][y]==0 && y>0 && x>0){
+                moves.push_back({x,y});
+                y--;
+                x--;
+            }
             
-//             while(board[x][y]==0 && y<8){
-//                 moves.push_back({x,y});
-//                 y++;
-//             }
-//             x = origin.first;
-//             y = origin.second;
-//             while(board[x][y]==0 && y>0){
-//                 moves.push_back({x,y});
-//                 y--;
-//             }
-//             x = origin.first;
-//             y = origin.second;
+            if(x>0 && y>0){
+                if(white?(board[x][y]<0):(board[x][y]>0)){
+                    moves.push_back({x,y});
+                }
+            }
+            
+            x = origin.first+1;
+            y = origin.second-1;
 
-//             while(board[x][y]==0 && x<8){
-//                 moves.push_back({x,y});
-//                 x++;
-//             }
-//             x = origin.first;
-//             y = origin.second;
+            while(board[x][y]==0 && x<8 && y >0){
+                moves.push_back({x,y});
+                x++;
+                y--;
+            }
 
-//             while(board[x][y]==0 && x>0){
-//                 moves.push_back({x,y});
-//                 x--;
-//             }
+            if(x<7 && y>0){
+                if(white?(board[x][y]<0):(board[x][y]>0)){
+                    moves.push_back({x,y});
+                }
+            }
 
-//         }
-//         return moves;
+            x = origin.first-1;
+            y = origin.second+1;
 
-// };
+            while(board[x][y]==0 && x>0 && y <8){
+                moves.push_back({x,y});
+                x--;
+                y++;
+            }
+
+            if(x>0 && y<7){
+                if(white?(board[x][y]<0):(board[x][y]>0)){
+                    moves.push_back({x,y});
+                }
+            }
+
+            return moves;
+        }
+
+};
