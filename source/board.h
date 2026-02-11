@@ -1,5 +1,6 @@
 #pragma once
 #include "raylib.h"
+#include "chessmen.cpp"
 #include <vector>
 #include <utility>
 #include <map>
@@ -8,8 +9,8 @@
 class Board
 {
     private:
-        
-    int rows = 8;
+        Sound moved;
+        int rows = 8;
         int cell_size = 100;
         bool selected = true;
         bool white = true;
@@ -18,7 +19,7 @@ class Board
         std::pair<int,int> coords = {4,4};
         std::pair<int,int> current_peice = {-1,-1};
         
-        bool Is_Valid_Pos(int x , int y);
+        bool Is_Valid_Pos(int x , int y , int id);
     
         int grid[8][8] = {{-2,-3,-4,-5,-6,-4,-3,-2},
                         {-1,-1,-1,-1,-1,-1,-1,-1},

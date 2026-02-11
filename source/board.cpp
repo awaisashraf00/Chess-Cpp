@@ -1,9 +1,15 @@
-#include "raylib.h"
 #include "board.h"
+#include <iostream>
 
 Board::Board()
 {
-    // Load all piece textures once to avoid per-frame loads
+    InitAudioDevice();   // This initializes the default audio device
+    if (!IsAudioDeviceReady()) {
+        std::cout<< "Audio device not ready!\n";
+    }
+    Wave wave = LoadWave("game-sounds/moved.mp3");   // Load wave
+    moved = LoadSoundFromWave(wave);                   
+    SetSoundVolume(moved, 1.0f); // Max volume
     for (const auto &p : pieces) {
         Texture2D tex = LoadTexture(p.second.c_str());
         textures[p.first] = tex;
@@ -13,9 +19,11 @@ Board::Board()
 Board::~Board()
 {
     // Unload textures when Board is destroyed
+    UnloadSound(moved);
     for (auto &t : textures) {
         UnloadTexture(t.second);
     }
+
 }
 
 void Board::Display_Board() {
@@ -45,23 +53,50 @@ void Board::Display_Board() {
 }
 
 
-// bool Board::Is_Valid_Pos(int x , int y)
-// {
-//     int chessMen = grid[x][y];
-    
-// }
+bool Board::Is_Valid_Pos(int x, int y, int id)
+{
+    Chessmen* piece = nullptr;
 
+    if (id == (white ? -1 : 1))
+        piece = new Pawn(x, y, white);
+    else if (id == (white ? -2 : 2))
+        piece = new Tower(x, y, white);
+    else if (id == (white ? -4 : 4))
+        piece = new Missile(x, y, white);
+    else if (id == (white ? -3 : 3))
+        piece = new Knight(x, y, white);
+    // else if (id == (white ? -5 : 5))
+    //     piece = new Queen(x, y, white);
+    // else if (id == (white ? -4 : 4))
+    //     piece = new King(x, y, white);
+    else
+        return false;
+
+    auto allowed_moves = piece->possible_move(grid);
+    std::pair<int,int> current_move = {coords.first, coords.second};
+
+    for (auto move : allowed_moves) {
+        std::cout<<move.first <<". "<< move.second <<std::endl;
+        if (move == current_move) {
+            delete piece;
+            return true;
+        }
+    }
+
+    delete piece;
+    return false;
+}
 
 void Board::Game_Input()
 {
     int key = GetKeyPressed();
-
+    
     if(key==KEY_UP){
         if(coords.first > 0 )
-            coords.first--;
+        coords.first--;
     }else if(key==KEY_DOWN){
         if(coords.first < 7)
-            coords.first++;
+        coords.first++;
         
     }else if(key==KEY_LEFT){
         if(coords.second > 0)
@@ -87,7 +122,6 @@ void Board::Game_Input()
             white = true;
             black = false;
 
-            selected = false;
             current_peice.first = coords.first;
             current_peice.second = coords.second;
         }
@@ -101,18 +135,23 @@ void Board::Game_Input()
 
 
     }else if(key==KEY_ENTER && selected == false){
-        if(!white){
-            if(grid[coords.first][coords.second] <= 0){
-                selected = true;
-                grid[coords.first][coords.second] = grid[current_peice.first][current_peice.second];
-                grid[current_peice.first][current_peice.second] = 0;
+        if(Is_Valid_Pos(current_peice.first,current_peice.second,grid[current_peice.first][current_peice.second]))
+            if(black){
+                if(grid[coords.first][coords.second] <= 0){
+                    grid[coords.first][coords.second] = grid[current_peice.first][current_peice.second];
+                    grid[current_peice.first][current_peice.second] = 0;
+                    selected = true;
+                    PlaySound(moved);
+                }
+            }else{ 
+                if(grid[coords.first][coords.second] >= 0){
+                    grid[coords.first][coords.second] = grid[current_peice.first][current_peice.second];
+                    grid[current_peice.first][current_peice.second] = 0;
+                    selected = true;
+                    PlaySound(moved);
+                }
             }
-        }else if (!black){ 
-            if(grid[coords.first][coords.second] >= 0){
-                selected = true;
-                grid[coords.first][coords.second] = grid[current_peice.first][current_peice.second];
-                grid[current_peice.first][current_peice.second] = 0;
-            }
-        }
+        
     }
 }
+
