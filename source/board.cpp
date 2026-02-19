@@ -148,7 +148,14 @@ void Board::Game_Input()
                         grid[current_peice.first][current_peice.second] = grid[coords.first][coords.second];
                         grid[coords.first][coords.second] = temp;
                     }else{
-
+                        if(grid[current_peice.first][current_peice.second] == 6){
+                                b_king.first = coords.first;
+                                b_king.second = coords.second;
+                                
+                            }else if(grid[current_peice.first][current_peice.second] == 6){
+                                w_king.first = coords.first;
+                                w_king.second = coords.second;
+                            }
                         selected = true;
                     }
                     PlaySound(moved);
