@@ -4,9 +4,6 @@
 Board::Board()
 {
     InitAudioDevice();   // This initializes the default audio device
-    if (!IsAudioDeviceReady()) {
-        std::cout<< "Audio device not ready!\n";
-    }
     Wave wave = LoadWave("game-sounds/moved.mp3");   // Load wave
     moved = LoadSoundFromWave(wave);                   
     SetSoundVolume(moved, 1.0f); // Max volume
@@ -52,11 +49,17 @@ void Board::Display_Board() {
     }
 }
 
+bool Board::Check_for_check(){
+
+    King king(white ? b_king.first : w_king.first ,
+        white ? b_king.second : b_king.second ,white);
+    return king.Check_for_check(grid);
+}
+
 
 bool Board::Is_Valid_Pos(int x, int y, int id)
 {
     Chessmen* piece = nullptr;
-
     if (id == (white ? -1 : 1))
         piece = new Pawn(x, y, white);
     else if (id == (white ? -2 : 2))
@@ -67,8 +70,8 @@ bool Board::Is_Valid_Pos(int x, int y, int id)
         piece = new Knight(x, y, white);
     else if (id == (white ? -5 : 5))
         piece = new Queen(x, y, white);
-    // else if (id == (white ? -4 : 4))
-    //     piece = new King(x, y, white);
+    else if (id == (white ? -6 : 6))
+        piece = new King(x, y, white);
     else
         return false;
 
@@ -138,18 +141,39 @@ void Board::Game_Input()
         if(Is_Valid_Pos(current_peice.first,current_peice.second,grid[current_peice.first][current_peice.second]))
             if(black){
                 if(grid[coords.first][coords.second] <= 0){
+                    int temp = grid[coords.first][coords.second];
                     grid[coords.first][coords.second] = grid[current_peice.first][current_peice.second];
                     grid[current_peice.first][current_peice.second] = 0;
-                    selected = true;
+                    if(Check_for_check()){
+                        grid[current_peice.first][current_peice.second] = grid[coords.first][coords.second];
+                        grid[coords.first][coords.second] = temp;
+                    }else{
+
+                        selected = true;
+                    }
                     PlaySound(moved);
                 }
             }else{ 
                 if(grid[coords.first][coords.second] >= 0){
-                    grid[coords.first][coords.second] = grid[current_peice.first][current_peice.second];
-                    grid[current_peice.first][current_peice.second] = 0;
-                    selected = true;
-                    PlaySound(moved);
-                }
+                    int temp = grid[coords.first][coords.second];
+                        grid[coords.first][coords.second] = grid[current_peice.first][current_peice.second];
+                        grid[current_peice.first][current_peice.second] = 0;
+                        if(Check_for_check()){
+                            grid[current_peice.first][current_peice.second] = grid[coords.first][coords.second];
+                            grid[coords.first][coords.second] = temp;
+                        }else{
+                            if(grid[current_peice.first][current_peice.second] == -6){
+                                b_king.first = coords.first;
+                                b_king.second = coords.second;
+                                
+                            }else if(grid[current_peice.first][current_peice.second] == -6){
+                                w_king.first = coords.first;
+                                w_king.second = coords.second;
+                            }
+                            selected = true;
+                        }
+                        PlaySound(moved);
+                    }
             }
         
     }

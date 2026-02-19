@@ -16,10 +16,14 @@ class Board
         bool white = true;
         bool black = false;
         
+        std::pair<int,int> b_king = {0,4};
+        std::pair<int,int> w_king = {7,4};
+        
         std::pair<int,int> coords = {4,4};
         std::pair<int,int> current_peice = {-1,-1};
         
         bool Is_Valid_Pos(int x , int y , int id);
+        bool Check_for_check();
     
         int grid[8][8] = {{-2,-3,-4,-5,-6,-4,-3,-2},
                         {-1,-1,-1,-1,-1,-1,-1,-1},
@@ -50,5 +54,4 @@ class Board
         ~Board();
         void Display_Board();
         void Game_Input();
-		
 };
